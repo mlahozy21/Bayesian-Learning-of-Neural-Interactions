@@ -7,7 +7,7 @@ neurons are modelled as a continuous-time **point-process interacting particle s
 that couples them.
 
 MVA project for the course *Interactions* (J. Randon-Furling). Includes the full
-theory write-up (LaTeX paper) and self-contained Python code that reproduces every
+theory write-up (LaTeX report) and self-contained Python code that reproduces every
 figure.
 
 > **Authors:** Marcos Lahoz and Romain Hû.
@@ -37,12 +37,12 @@ The full derivations and results are in [`paper/main.pdf`](paper/main.pdf).
 │   ├── simulators.py            # IPS simulation + exact factorised filter (n neurons)
 │   ├── smc.py                   # bootstrap SMC for a continuous interaction parameter
 │   ├── experiments/             # one script per figure (fig1–fig5)
-│   ├── figures/                 # generated figure PDFs (used by the paper)
+│   ├── figures/                 # generated figure PDFs (used by the report)
 │   └── README.md                # detailed run instructions and runtimes
 └── paper/
     ├── main.tex                 # LaTeX source
     ├── references.bib
-    └── main.pdf                 # compiled paper
+    └── main.pdf                 # compiled report
 ```
 
 ## Quick start
@@ -54,7 +54,7 @@ python experiments/fig1_posterior_n2.py     # ... fig2 ... fig5
 ```
 
 Figures are written to `code/figures/`. See [`code/README.md`](code/README.md) for
-per-figure runtimes and caching flags, and for how to rebuild the paper.
+per-figure runtimes and caching flags, and for how to rebuild the report.
 
 ## License
 
