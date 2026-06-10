@@ -42,4 +42,36 @@ Every figure of the report is reproduced by one script in `code/experiments/`
 | SMC, continuous interactions (fig 5) | M = 2000 particles, T = 500 | Filter recovers `J* ∈ {0, 1, 2}` from a `N(0.5, 1)` prior | ~20 s |
 
 The factorised posterior cuts the cost from `2^{n(n-1)}` to `n·2^{n-1}` hypotheses —
-thi
+this is what makes the n = 5–7 experiments tractable at all.
+
+## Repository layout
+
+```
+.
+├── README.md  LICENSE  requirements.txt  .gitignore
+├── code/
+│   ├── simulators.py            # IPS simulation + exact factorised filter (n neurons)
+│   ├── smc.py                   # bootstrap SMC for a continuous interaction parameter
+│   ├── experiments/             # one script per figure (fig1–fig5)
+│   ├── figures/                 # generated figure PDFs (used by the report)
+│   └── README.md                # detailed run instructions and runtimes
+└── paper/
+    ├── main.tex                 # LaTeX source
+    ├── references.bib
+    └── main.pdf                 # compiled report
+```
+
+## Quick start
+
+```bash
+pip install -r requirements.txt
+cd code
+python experiments/fig1_posterior_n2.py     # ... fig2 ... fig5
+```
+
+Figures are written to `code/figures/`. See [`code/README.md`](code/README.md) for
+per-figure runtimes and caching flags, and for how to rebuild the report.
+
+## License
+
+Released under the MIT License — see `LICENSE`.
