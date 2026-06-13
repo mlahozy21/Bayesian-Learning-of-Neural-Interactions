@@ -37,12 +37,30 @@ Every figure of the report is reproduced by one script in `code/experiments/`
 |---|---|---|:--:|
 | Posterior recovery, n = 2 (fig 1) | 20 seeded runs | Posterior mass concentrates on the true `J*` by t ≈ 100 | ~5 s |
 | Convergence rate (fig 2) | N = 40 replicates/hypothesis, KL from 5000 trajectories, ε = 0.1 | Empirical rate matches the CLT-based bound (drift μ̂ ≈ 0.074, σ̂² ≈ 0.103 → discrimination scale ≈ 30 spikes) | ~15 s |
-| Structure recovery, n = 5 (fig 3) | `W* ~ Ber(0.4)`, T = 1500, factorised posterior | Final Frobenius error ‖Ŵ−W*‖_F ≈ 0.41 | ~30 s |
-| Error scaling (fig 4) | n ∈ {3, 5, 7}, 3 replicates | Error decays as ~1/√t, consistent with the theory | ~3 min |
+| Structure recovery, n = 5 (fig 3) | `W* ~ Ber(0.4)`, T = 1500, factorised posterior, 10 seeds | Final Frobenius error ‖Ŵ−W*‖_F = 0.136 ± 0.215 (mean±std over 10 seeds; 0.031 ± 0.048 normalised by √(n(n−1))) | ~5 min |
+| Error scaling (fig 4) | n ∈ {3, 5, 7}, T = 400/800/1200 resp., 3 replicates | Normalised error ‖Ŵ−W*‖_F /√(n(n−1)) decays as ~1/√t for each n (see note below on the differing per-n time budgets) | ~3 min |
 | SMC, continuous interactions (fig 5) | M = 2000 particles, T = 500 | Filter recovers `J* ∈ {0, 1, 2}` from a `N(0.5, 1)` prior | ~20 s |
 
 The factorised posterior cuts the cost from `2^{n(n-1)}` to `n·2^{n-1}` hypotheses —
 this is what makes the n = 5–7 experiments tractable at all.
+
+> **Time budgets and normalisation (figs 3 & 4).** These two experiments use
+> *different* horizons by design and should not be read as a single run:
+> fig 3 is a detailed n = 5 snapshot at **T = 1500**, while fig 4's scaling study
+> uses a **shorter, n-dependent horizon** (T = 400 / 800 / 1200 for n = 3 / 5 / 7)
+> to keep the multi-size sweep affordable. The two figures are therefore *not*
+> directly comparable point-for-point; fig 4 demonstrates the ~1/√t decay
+> *within each n's own time budget*, and fig 3 reports the deeper-T endpoint for
+> n = 5. Both now report the **same normalised error** ‖Ŵ−W*‖_F /√(n(n−1))
+> (number of off-diagonal entries), so their y-axes are on the same scale; fig 3
+> additionally prints the raw (un-normalised) Frobenius norm.
+>
+> **fig 3 is now multi-seed.** The previously reported "≈ 0.41" was a single
+> seed (seed 7), which happens to be ~3× the typical error. fig 3 now averages
+> over `N_REPLICATES = 10` seeds by default and reports **mean ± std**
+> (raw 0.136 ± 0.215; normalised 0.031 ± 0.048). The figure panels still use the
+> base-seed (seed 7) run for legibility. Run `python experiments/fig3_posterior_n5.py`
+> to reproduce, or pass `--n-replicates 1` for the old single-seed behaviour.
 
 ## Repository layout
 

@@ -96,6 +96,45 @@ if __name__ == "__main__":
     runs1 = run_batch(true_J=1, n_runs=N_RUNS)
     runs0 = run_batch(true_J=0, n_runs=N_RUNS)
 
+    # ------------------------------------------------------------------
+    # Sanity cross-check of the hand-rolled KL estimator.
+    #
+    # Theory: under J=1 the posterior log-ratio log r(tau_k) = log p_k/(1-p_k)
+    # grows on average linearly in the event count k with slope KL(K_1, K_0)
+    # (and -KL under J=0). We estimated KL above by Monte-Carlo averaging the
+    # per-interspike log-likelihood ratios. As an independent check, we fit the
+    # empirical slope of log r vs k directly from the simulated posterior
+    # trajectories and assert it is consistent with KL_est. A large discrepancy
+    # would flag a bug in either the KL estimator or the filter ODE.
+    def empirical_slope(runs, kmax=40):
+        slopes = []
+        for r in runs:
+            k, lr = extract_logratio_series(r)
+            m = k <= kmax
+            if m.sum() >= 3:
+                # least-squares slope of lr on k (no intercept-free origin pin;
+                # a simple polyfit is robust enough for a diagnostic).
+                slopes.append(np.polyfit(k[m], lr[m], 1)[0])
+        return np.array(slopes)
+
+    slope1 = empirical_slope(runs1)
+    slope0 = empirical_slope(runs0)
+    print(f"  empirical slope (J=1): {slope1.mean():.4f} ± {slope1.std():.4f} "
+          f"(expect ~ +KL = {KL_est:.4f})")
+    print(f"  empirical slope (J=0): {slope0.mean():.4f} ± {slope0.std():.4f} "
+          f"(expect ~ -KL = {-KL_est:.4f})")
+    # Diagnostic assertion: the mean empirical slope under J=1 should be
+    # positive and within a generous factor of the KL estimate (Monte-Carlo and
+    # finite-k effects make the match approximate, not exact).
+    if len(slope1):
+        assert slope1.mean() > 0, "log-ratio should drift UP under J=1"
+        ratio = slope1.mean() / max(KL_est, 1e-9)
+        assert 0.3 < ratio < 3.0, (
+            f"empirical slope {slope1.mean():.4f} inconsistent with KL "
+            f"estimate {KL_est:.4f} (ratio {ratio:.2f}); check the KL "
+            f"estimator or the filter ODE."
+        )
+
     fig, axes = plt.subplots(1, 2, figsize=(11, 3.8), constrained_layout=True)
 
     ax = axes[0]

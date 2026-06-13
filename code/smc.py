@@ -178,6 +178,18 @@ class SMCFilter2:
                 J = J[idx].copy()
                 V = V[idx].copy()
                 # Jitter J to preserve diversity; decay slowly.
+                #
+                # NOTE on the decay index: the jitter std is shrunk by the
+                # *resample counter* (how many resampling moves have happened so
+                # far), NOT by the event/step index k. This is a deliberate
+                # choice — diversity is only injected at resampling moves, so the
+                # natural clock for the artificial-dynamics perturbation is the
+                # number of such moves. The Liu & West (2001) / Chopin &
+                # Papaspiliopoulos (2020, Ch. 17) asymptotic-correctness argument
+                # asks for sigma_k -> 0; both step-indexing and resample-indexing
+                # satisfy that (resamples accumulate without bound as T grows).
+                # If you instead want the std tied to elapsed events to match the
+                # stated guarantee verbatim, replace `resample_counter` with `k`.
                 sigma_k = self.sigma_jitter0 * (1.0 + resample_counter) ** (-self.jitter_decay / 2.0)
                 J = J + sigma_k * rng.standard_normal(M)
                 logw = np.zeros(M)
